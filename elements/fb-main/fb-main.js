@@ -5,10 +5,10 @@ Polymer('fb-main', {
 
     this.terrain_ = new FbTerrain();
 
-    this.events_();
     this.draw();
+    this.setupEvents_();
   },
-  events_: function() {
+  setupEvents_: function() {
     window.addEventListener('resize', this.windowResizeEvt_, false);
   },
   windowResize_: function() {

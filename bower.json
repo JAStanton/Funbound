@@ -1,0 +1,21 @@
+{
+  "name": "funbound",
+  "version": "0.0.0",
+  "authors": [
+    "Jonathan Stanton <jonathan@jastanton.com>"
+  ],
+  "description": "Funbound is a mini game similar to Scorched Earth or Tanks.",
+  "license": "MIT",
+  "homepage": "http://jstan.me",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#~0.2.4"
+  }
+}

@@ -1,15 +1,20 @@
 Polymer('fb-main', {
   ready: function() {
     this.windowResizeEvt_ = this.windowResize_.bind(this);
+    this.mouse_ = document.getElementById("fb-mouse");
+
     this.terrain_ = new FbTerrain();
     this.player_ = new FbPlayer();
+    this.player_.setAttribute("mouse-model", "fb-mouse");
+    this.player_.x = 100;
+    this.player_.y = 100;
 
     this.super(); // this will call draw once so prepare for that.
     // Start polling for changings. Events are slow... ~120ms vs browser frame rate.
     requestAnimationFrame(this.animate.bind(this));
+    this.setupEvents_();
   },
   setupEvents_: function() {
-    window.addEventListener('resize', this.windowResizeEvt_, false);
     window.addEventListener('resize', this.windowResizeEvt_, false);
   },
   windowResize_: function() {

@@ -3,10 +3,6 @@ Polymer('fb-terrain', {
     displace: 4,
     roughness: 0.6
   },
-  ready: function() {
-    this.super();
-    this.draw();
-  },
   draw: function() {
     this.super();
     var terPoints = this.generateMap_(this.displace, this.roughness);
@@ -24,9 +20,6 @@ Polymer('fb-terrain', {
   },
 
   /*
-   * width and height are the overall width and height we have to work with, displace is
-   * the maximum deviation value. This stops the terrain from going out of bounds if we choose
-   *
    * http://www.somethinghitme.com/2013/11/11/simple-2d-terrain-with-midpoint-displacement/
    */
   generateMap_: function(displace, roughness) {

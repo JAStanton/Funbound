@@ -8,29 +8,32 @@ Polymer('fb-canvas', {
     this.context = this.canvas.getContext('2d');
     this.canvas.height = this.height || window.innerHeight;
     this.canvas.width = this.width || window.innerWidth;
+
+    // kicking things off.
+    this.draw();
   },
   xChanged: function() {
-    this.update();
+    this.draw();
   },
   yChanged: function() {
-    this.update();
+    this.draw();
   },
   widthChanged: function(oldValue, newValue) {
     this.canvas.width = newValue;
-    this.update();
+    this.draw();
   },
   heightChanged: function(oldValue, newValue) {
     this.canvas.height = newValue;
-    this.update();
+    this.draw();
   },
   clear: function() {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
   },
   draw: function() {
     this.clear();
+    // implement your thing here.
   },
-  update: function() {
-    this.fire('update');
+  animate: function() {
     this.draw();
   }
 });

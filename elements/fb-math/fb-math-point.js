@@ -8,7 +8,6 @@ Polymer('fb-math-point', {
     return offsetPosition;
   },
   getAngleTo: function(point) {
-    var deg = -Math.atan2(-this.y + point.y, this.x - point.x) * 180 / Math.PI;
-    return deg %= 360;
+    return Math.atan2(this.y - point.y, this.x - point.x);
   },
 });

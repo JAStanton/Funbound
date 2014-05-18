@@ -1,4 +1,8 @@
 Polymer('fb-player', {
+  observe: {
+    'mouse_.position.x': 'updateRotationDegree_',
+    'mouse_.position.y': 'updateRotationDegree_',
+  },
   ready: function() {
     this.mouse_ = document.getElementById("fb-mouse");
 
@@ -7,16 +11,13 @@ Polymer('fb-player', {
 
     this.super();
   },
+  updateRotationDegree_:  function() {
+    var relativePos = this.mouse_.getPosition(this.center);
+    this.rotationDegree = this.center.getAngleTo(relativePos);
+  },
   draw: function() {
     this.super();
-    this.context.save();
-    var relativePos = this.mouse_.getPosition(this.position);
-
-    this.context.translate(this.center.x, this.center.y);
-    var degree = this.center.getAngleTo(relativePos);
-    this.context.rotate(degree * Math.PI/180);
     this.context.fillStyle = "#FF0000";
-    this.context.fillRect(-this.center.x, -this.center.y, this.width, this.height);
-    this.context.restore();
+    this.context.fillRect(0, 0, this.width, this.height);
   }
 });

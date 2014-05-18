@@ -13,6 +13,7 @@ Polymer('fb-canvas', {
     this.canvas.width = this.width || window.innerWidth;
     this.center.x = this.canvas.height / 2;
     this.center.y = this.canvas.width / 2;
+    this.rotationalDegree = 0;
 
     // kicking things off.
     this.draw();

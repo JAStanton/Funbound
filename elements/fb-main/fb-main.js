@@ -1,7 +1,22 @@
 Polymer('fb-main', {
+  observe: {
+    'imageManager_.state': 'imageManagerStateChange'
+  },
+  imageManagerStateChange: function(oldValue, newValue) {
+    console.log("imageManagerStateChange", oldValue, newValue);
+  },
   ready: function() {
     this.windowResizeEvt_ = this.windowResize_.bind(this);
     this.mouse_ = document.getElementById("fb-mouse");
+    this.imageManager_ = document.getElementById("fb-image-manager");
+
+    this.imageManager_.preload([{
+      name: "bullet",
+      src: "/static/images/bullet.png"
+    },{
+      name: "explosion",
+      src: "/static/images/explosion.png"
+    }]);
 
     this.terrain_ = new FbTerrain();
     this.player_ = new FbPlayer();

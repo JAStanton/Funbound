@@ -1,8 +1,4 @@
 Polymer('fb-player', {
-  // observe: {
-  //   'mouse_.position.x': 'updateRotationDegree_',
-  //   'mouse_.position.y': 'updateRotationDegree_',
-  // },
   ready: function() {
     this.mouse_ = document.getElementById("fb-mouse");
     this.mouse_.subscribe(this.updateRotationDegree_.bind(this));

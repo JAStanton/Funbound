@@ -31,7 +31,6 @@ Polymer('fb-canvas', {
   widthChanged: function(oldValue, newValue) {
     this.canvas.width = newValue;
     this.center.x = this.canvas.height / 2;
-
     this.draw();
   },
   heightChanged: function(oldValue, newValue) {

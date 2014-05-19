@@ -3,7 +3,7 @@ Polymer('fb-image-manager', {
     state: 'ready'
   },
   ready: function() {
-    this.images_ = {};
+    this.images = {};
   },
   preload: function(images) {
     this.state = 'loading';
@@ -29,14 +29,13 @@ Polymer('fb-image-manager', {
 
       // Failed
       img.onabort = function() {
-        console.log("ON ABORT");
         loaded++;
         if (loaded === count) {
           this.state = 'ready';
         }
       }.bind(this);
 
-      this.images_[image.name] = fbImage;
+      this.images[image.name] = fbImage;
       // Ready to start loading.
       img.src = image.src;
     }.bind(this));

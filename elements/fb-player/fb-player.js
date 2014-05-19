@@ -14,7 +14,7 @@ Polymer('fb-player', {
   },
   draw: function() {
     this.super();
-    this.context.fillStyle = "#FF0000";
+    this.context.fillStyle = "rgb(200,0,0)";
     this.context.fillRect(0, 0, this.width, this.height);
   }
 });

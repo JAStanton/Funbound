@@ -13,7 +13,6 @@ Polymer('fb-main', {
     // Start polling for changings. Events are slow... ~120ms vs browser frame rate.
     requestAnimationFrame(this.animate.bind(this));
     this.setupEvents_();
-    this.degree = 0;
   },
   setupEvents_: function() {
     window.addEventListener('resize', this.windowResizeEvt_, false);
@@ -25,6 +24,7 @@ Polymer('fb-main', {
     this.terrain_.height = window.innerHeight;
     this.terrain_.width = window.innerWidth;
   },
+  // Inspiration for rotation http://jsfiddle.net/FWvYg/
   draw: function() {
     this.super();
     this.context.drawImage(this.terrain_.canvas, this.terrain_.position.x, this.terrain_.position.y);

@@ -9,6 +9,8 @@ Polymer('fb-canvas', {
 
     this.canvas = this.$.canvas;
     this.context = this.canvas.getContext('2d');
+    this.context.webkitImageSmoothingEnabled = true;
+
     this.canvas.height = this.height || window.innerHeight;
     this.canvas.width = this.width || window.innerWidth;
     this.center.x = this.canvas.height / 2;

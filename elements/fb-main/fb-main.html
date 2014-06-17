@@ -1,13 +1,11 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../fb-canvas/fb-canvas.html">
-<link rel="import" href="../fb-terrain/fb-terrain.html">
-<link rel="import" href="../fb-player/fb-player.html">
-<link rel="import" href="../fb-image-manager/fb-image-manager.html">
+<link rel="import" href="../fb-layer/fb-layer.html">
+<link rel="import" href="../fb-image/fb-image.html">
+<link rel="import" href="../fb-stage/fb-stage.html">
+<link rel="import" href="../fb-trajectory/fb-trajectory.html">
+<link rel="import" href="../fb-pool/fb-pool.html">
 
-<polymer-element name="fb-main" extends="fb-canvas">
-  <template>
-    <shadow></shadow>
-    <style type="text/css" src="fb-main.css"></style>
-  </template>
+<polymer-element name="fb-main" extends="fb-layer">
+  <template><content></content><shadow></shadow></template>
   <script type="text/javascript" src="fb-main.js"></script>
 </polymer-element>

@@ -1,8 +1,11 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../fb-math/fb-math.html">
-<polymer-element name="fb-canvas">
+<polymer-element name="fb-layer" constructor="FbLayer">
   <template>
+    <style>
+      :host { position: absolute; }
+    </style>
     <canvas id="canvas"></canvas>
   </template>
-  <script type="text/javascript" src="fb-canvas.js"></script>
+  <script type="text/javascript" src="fb-layer.js"></script>
 </polymer-element>

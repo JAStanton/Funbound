@@ -1,0 +1,19 @@
+<polymer-element name="fb-constants">
+  <script>
+  (function() {
+    var shotDelay = 300; // milliseconds (10 bullets/3 seconds)
+    var bulletSpeed = 800; // pixels/second
+    var numberOfBullets = 20;
+    var gravity = 980; // pixels/second/second
+
+    Polymer('fb-constants', {
+       ready: function() {
+        this.shotDelay = 300;
+        this.bulletSpeed = 800;
+        this.numberOfBullets = 20;
+        this.gravity = 980;
+       }
+    });
+  })();
+  </script>
+</polymer-element>

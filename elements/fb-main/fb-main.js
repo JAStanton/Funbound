@@ -1,72 +1,106 @@
 Polymer('fb-main', {
-  observe: {
-    'imageManager_.state': 'imageManagerStateChange'
-  },
-  imageManagerStateChange: function(oldValue, newValue) {
-    console.log("imageManagerStateChange", oldValue, newValue);
-  },
   ready: function() {
-    this.windowResizeEvt_ = this.windowResize_.bind(this);
-    this.mouse_ = document.getElementById("fb-mouse");
-    this.imageManager_ = document.getElementById("fb-image-manager");
-
-    this.imageManager_.preload([{
-      name: "bullet",
-      src: "/static/images/bullet.png"
-    },{
-      name: "explosion",
-      src: "/static/images/explosion.png"
-    }]);
-
-    this.terrain_ = new FbTerrain();
-    this.player_ = new FbPlayer();
-    this.player_.setAttribute("mouse-model", "fb-mouse");
-    this.player_.position.x = 100;
-    this.player_.position.y = 100;
-
-    this.super(); // this will call draw once so prepare for that.
-    // Start polling for changings. Events are slow... ~120ms vs browser frame rate.
-    requestAnimationFrame(this.animate.bind(this));
-    this.setupEvents_();
-    this.windowResize_();
-  },
-  setupEvents_: function() {
-    window.addEventListener('resize', this.windowResizeEvt_, false);
-  },
-  windowResize_: function() {
-    this.height = window.innerHeight;
+    // Root canvas needs to be full width
     this.width = window.innerWidth;
+    this.height = window.innerHeight;
 
-    this.terrain_.height = window.innerHeight;
-    this.terrain_.width = window.innerWidth;
-  },
-  draw: function() {
+    // Load constants.
+    this.constants_ = document.getElementById('fb-constants');
+
+    // setup mouse events
+    this.mouse_ = document.getElementById('fb-mouse');
+    this.mouse_.subscribe("mousemove", this.mouseUpdate_.bind(this));
+
+    // Load some images
+    this.imageManager_ = document.getElementById('fb-image-manager');
+    this.imageManager_.preload('bullet', '/static/images/bullet.png');
+    this.imageManager_.preload('ground', '/static/images/ground.png');
+
+    // Timestamp of last bullet shot, for staggering firing.
+    this.lastBulletShotAt_ = 0;
+
+    // Setup canvas, defaults, render loop.
     this.super();
-    this.context.save();
-    this.context.fillStyle = "rgba(0, 0, 200, 0.5)";
-    this.context.fillRect (0, 0, this.width, this.height);
-    this.context.restore();
 
-    this.context.drawImage(this.terrain_.canvas, this.terrain_.position.x, this.terrain_.position.y);
+    // Add the stage layer.
+    this.stage = new FbStage();
+    this.stage.backgroundColor = 'rgba(51, 113, 195, 0.8)';
+    this.stage.width = this.width;
+    this.stage.height = this.height;
+    this.appendChild(this.stage);
 
-    this.context.save();
-    this.context.translate(this.player_.position.x, this.player_.position.y);
-    this.context.rotate(this.player_.rotationDegree);
-    this.context.drawImage(this.player_.canvas, -this.player_.center.x, -this.player_.height / 2);
-    this.context.restore();
+    // Add our trajectory layer.
+    this.trajectory = new FbTrajectory();
+    this.trajectory.width = this.width;
+    this.trajectory.height = this.height;
+    this.appendChild(this.trajectory);
 
-    if (this.imageManager_.images["bullet"] && this.imageManager_.images["bullet"].image.width > 0) {
-      var bullet = this.imageManager_.images["bullet"];
-      bullet.draw();
-      this.context.drawImage(bullet.canvas, 200, 300);
-    }
+    // Add our gun layer.
+    this.gun = new FbImage();
+    this.gun.x = 50;
+    this.gun.y = this.height - 100;
+    this.gun.imageId = 'bullet';
+    this.gun.setAnchor(0.5, 0.5);
+    this.appendChild(this.gun);
+
+    this.trajectory.drawPosition = this.gun.relativePosition;
+
+    // Add our ground layer.
+    this.ground = new FbImage();
+    this.ground.x = 0;
+    this.ground.y = this.height - 32;
+    this.ground.repetition = 'repeat-x';
+    this.ground.width = this.width; // this will need to be responsive.
+    this.ground.imageId = 'ground';
+    this.appendChild(this.ground);
+
+    // Create a pool of bullets
+    this.bulletPool = new FbPool();
+    this.bulletPool.init(function() {
+      var bullet = new FbImage();
+      bullet.imageId = 'bullet';
+      bullet.setAnchor(0.5, 0.5);
+      return bullet;
+    }.bind(this), function(bullet, index) {
+      bullet.alive = true;
+      bullet.poolIndex = index;
+      bullet.drawPosition = this.gun.relativePosition;
+      bullet.rotation = this.gun.rotation;
+      bullet.velocity.x = Math.cos(bullet.rotation) * this.constants_.bulletSpeed;
+      bullet.velocity.y = Math.sin(bullet.rotation) * this.constants_.bulletSpeed;
+      if (!this.contains(bullet)) {
+        this.appendChild(bullet);
+      }
+
+      setTimeout(function(bullet) {
+        this.bulletPool.discard(bullet.poolIndex);
+        bullet.alive = false;
+      }.bind(this, bullet), 1000);
+
+    }.bind(this));
   },
   animate: function() {
-    requestAnimationFrame(this.animate.bind(this));
-    this.player_.animate();
+    // I should also be binding on mousedown event to fire right away in stead
+    // of just checking every frame if mouse is down but **shrugs**.
+    if (this.mouse_.isDown) {
+      this.shootBullet_();
+    }
     this.super();
   },
-  detached: function() {
-    window.removeEventListener('resize', this.windowResizeEvt_, false);
+  shootBullet_: function() {
+    if (this.lastBulletShotAt_ === undefined) this.lastBulletShotAt_ = 0;
+    if (new Date().getTime() - this.lastBulletShotAt_ < this.constants_.shotDelay) return;
+    this.lastBulletShotAt_ = new Date().getTime();
+    this.bulletPool.create();
+    this.bulletPool.forEach(function(bullet) {
+      bullet.rotation = Math.atan2(bullet.velocity.y, bullet.velocity.x) * (180 / Math.PI) - 180;
+      console.log(bullet.rotation);
+    }, this);
+
   },
+  mouseUpdate_: function() {
+    var angle = this.gun.relativePosition.getAngleTo(this.mouse_.relativePosition);
+    this.gun.rotation = (angle * (180 / Math.PI) - 180);
+    this.trajectory.theta = angle * -1 - Math.PI;
+  }
 });

@@ -3,41 +3,53 @@ Polymer('fb-image-manager', {
     state: 'ready'
   },
   ready: function() {
-    this.images = {};
+    this.staging_ = [];
+    this.complete = {};
   },
-  preload: function(images) {
+  preload: function(name, src) {
+    this.staging_.push({ name: name, src: src });
+    this.async(this.preload_);
+  },
+  getImage: function(id) {
+    return this.complete[id];
+  },
+  preload_: function() {
+    // This could potentially cause a bug if I preload an image then on async
+    // preload another. That would suck.
+    if (this.state == 'loading') return;
+
     this.state = 'loading';
-    var count = images.length;
+    var count = this.staging_.length;
     if(count === 0) {
       this.state = 'ready';
       return;
     }
 
     var loaded = 0;
-    images.forEach(function(image) {
-      var img = new Image();
-      var fbImage = new FbImage("foo");
-
+    this.staging_.forEach(function(image) {
+      var newImgage = new Image();
       // Loaded
-      img.onload = function() {
-        fbImage.image = img;
+      newImgage.onload = function() {
         loaded++;
         if (loaded === count) {
           this.state = 'ready';
         }
+        this.fire(image.name + 'Loaded', { image: newImgage });
       }.bind(this);
 
       // Failed
-      img.onabort = function() {
+      newImgage.onabort = function() {
         loaded++;
         if (loaded === count) {
           this.state = 'ready';
         }
       }.bind(this);
 
-      this.images[image.name] = fbImage;
+      this.complete[image.name] = newImgage;
       // Ready to start loading.
-      img.src = image.src;
+      newImgage.src = image.src;
     }.bind(this));
+
+    this.staging_ = [];
   }
 });

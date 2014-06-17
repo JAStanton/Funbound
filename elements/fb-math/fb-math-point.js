@@ -8,6 +8,6 @@ Polymer('fb-math-point', {
     return offsetPosition;
   },
   getAngleTo: function(point) {
-    return Math.atan2(this.y - point.y, this.x - point.x);
+    return Math.atan2(this.y - point.y, this.x - point.x)
   },
 });
